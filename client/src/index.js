@@ -6,7 +6,14 @@ import App from "./components/App";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			notifyOnChangeProps: "tracked",
+			retry: 1,
+		},
+	},
+});
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 

@@ -330,7 +330,8 @@ export function useGetPlaylistTracks(playlistId) {
 /**
  * Return a comma separated string of track IDs from the given array of tracks
  */
-const getTrackIds = (tracks) => tracks.map(({ track }) => track.id).join(",");
+export const getTrackIds = (tracks) =>
+	tracks.map(({ track }) => track.id).join(",");
 
 /**
  * Get Audio Features for Several Tracks
@@ -358,24 +359,25 @@ export function useGetAudioFeaturesForTracks(tracks, enabled) {
  * Get Recommendations Based on Seeds
  * https://developer.spotify.com/documentation/web-api/reference/browse/get-recommendations/
  */
-export const getRecommendationsForTracks = (tracks) => {
-	const shuffledTracks = tracks.sort(() => 0.5 - Math.random());
-	const seed_tracks = getTrackIds(shuffledTracks.slice(0, 5));
-	const seed_artists = "";
-	const seed_genres = "";
+export const getRecommendationsForTracks = (seeds) => {
+	// const shuffledTracks = tracks.sort(() => 0.5 - Math.random());
+	// const seed_tracks = getTrackIds(shuffledTracks.slice(0, 5));
+	// const seed_artists = "";
+	// const seed_genres = "";
 
 	return axiosSpotifyClient.get(
-		`recommendations?seed_tracks=${seed_tracks}&seed_artists=${seed_artists}&seed_genres=${seed_genres}`
+		`recommendations?seed_tracks=${seeds?.seed_tracks}&seed_artists=${seeds?.seed_artists}&seed_genres=${seeds?.seed_genres}`
 	);
 };
 
-export function useGetRecommendationsForTracks(tracks, enabled) {
+export function useGetRecommendationsForTracks(seeds, enabled) {
 	return useQuery(
-		["RecommendationsForTracks", tracks, enabled],
+		["RecommendationsForTracks", seeds, enabled],
 		async () => {
-			return getRecommendationsForTracks(tracks).then((res) => res.data);
+			return getRecommendationsForTracks(seeds).then((res) => res.data);
 		},
 		{
+			refetchOnWindowFocus: false,
 			enabled: !!enabled,
 		}
 	);

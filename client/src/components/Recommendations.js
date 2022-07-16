@@ -1,21 +1,22 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { Link, useParams } from "react-router-dom";
 import PropTypes from "prop-types";
+import React, { useMemo, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import {
-	getPlaylist,
-	getRecommendationsForTracks,
-	getUser,
-	createPlaylist,
 	addTracksToPlaylist,
-	followPlaylist,
+	createPlaylist,
 	doesUserFollowPlaylist,
+	followPlaylist,
+	getTrackIds,
+	useGetPlaylist,
+	useGetRecommendationsForTracks,
+	useGetUser,
 } from "../spotify";
 import { catchErrors } from "../utils";
 
 import TrackItem from "./TrackItem";
 
 import styled from "styled-components/macro";
-import { theme, mixins, media, Main } from "../styles";
+import { Main, media, mixins, theme } from "../styles";
 const { colors } = theme;
 
 const PlaylistHeading = styled.div`
@@ -44,50 +45,81 @@ const PlaylistLink = styled(Link)`
 	}
 `;
 
-const Recommendations = (props) => {
+const Recommendations = () => {
 	const { playlistId } = useParams();
 
-	const [playlist, setPlaylist] = useState(null);
-	const [recommendations, setRecommmendations] = useState(null);
+	// const [playlist, setPlaylist] = useState(null);
+	// const [recommendations, setRecommmendations] = useState(null);
 	const [recPlaylistId, setRecPlaylistId] = useState(null);
-	const [userId, setUserId] = useState(null);
+	// const [userId, setUserId] = useState(null);
 	const [isFollowing, setIsFollowing] = useState(false);
 
-	useEffect(() => {
-		const fetchPlaylistData = async () => {
-			const { data } = await getPlaylist(playlistId);
-			setPlaylist(data);
-		};
-		catchErrors(fetchPlaylistData());
+	const getPlaylistQuery = useGetPlaylist(playlistId);
 
-		const fetchUserData = async () => {
-			const { data } = await getUser();
-			setUserId(data.id);
-		};
-		catchErrors(fetchUserData());
-	}, [playlistId]);
+	const getUserQuery = useGetUser();
 
-	useMemo(() => {
-		const fetchData = async () => {
-			if (playlist) {
-				const { data } = await getRecommendationsForTracks(
-					playlist.tracks.items
-				);
-				setRecommmendations(data);
+	const seed_artists = "";
+	const seed_genres = "";
+
+	const seed_tracks = useMemo(() => {
+		if (getPlaylistQuery.data?.tracks?.items) {
+			// let shuffledTracks = [];
+			// shuffledTracks = getPlaylistQuery.data?.tracks?.items?.sort(
+			// 	() => 0.5 - Math.random()
+			// );
+			// if (shuffledTracks) {
+			if (getPlaylistQuery.data?.tracks?.items) {
+				return getTrackIds(getPlaylistQuery.data?.tracks?.items?.slice(0, 5));
+				// setSeed_tracks(getTrackIds(shuffledTracks?.slice(0, 5)));
 			}
-		};
-		catchErrors(fetchData());
-	}, [playlist]);
+		}
+	}, [getPlaylistQuery.data?.tracks?.items]);
+
+	const getRecommendationsForTracksQuery = useGetRecommendationsForTracks(
+		{ seed_tracks, seed_artists, seed_genres },
+		getPlaylistQuery.data
+	);
+
+	// useEffect(() => {
+	// 	const fetchPlaylistData = async () => {
+	// 		const { data } = await getPlaylist(playlistId);
+	// 		setPlaylist(data);
+	// 	};
+	// 	catchErrors(fetchPlaylistData());
+
+	// 	// const fetchUserData = async () => {
+	// 	// 	const { data } = await getUser();
+	// 	// 	setUserId(data.id);
+	// 	// };
+	// 	// catchErrors(fetchUserData());
+	// }, [playlistId]);
+
+	// useMemo(() => {
+	// 	const fetchData = async () => {
+	// 		if (getPlaylistQuery.data) {
+	// 			const { data } = await getRecommendationsForTracks(
+	// 				getPlaylistQuery.data.tracks.items
+	// 			);
+	// 			setRecommmendations(data);
+	// 		}
+	// 	};
+	// 	catchErrors(fetchData());
+	// }, [getPlaylistQuery.data]);
 
 	// If recPlaylistId has been set, add tracks to playlist and follow
 	useMemo(() => {
 		const isUserFollowingPlaylist = async (plistId) => {
-			const { data } = await doesUserFollowPlaylist(plistId, userId);
+			const { data } = await doesUserFollowPlaylist(
+				plistId,
+				getUserQuery.data?.userId
+			);
 			setIsFollowing(data[0]);
 		};
 
 		const addTracksAndFollow = async () => {
-			const uris = recommendations.tracks.map(({ uri }) => uri).join(",");
+			const uris = getRecommendationsForTracksQuery.data.tracks
+				.map(({ uri }) => uri)
+				.join(",");
 			const { data } = await addTracksToPlaylist(recPlaylistId, uris);
 
 			// Then follow playlist
@@ -98,29 +130,37 @@ const Recommendations = (props) => {
 			}
 		};
 
-		if (recPlaylistId && recommendations && userId) {
+		if (
+			recPlaylistId &&
+			getRecommendationsForTracksQuery.data &&
+			getUserQuery.data?.userId
+		) {
 			catchErrors(addTracksAndFollow(recPlaylistId));
 		}
-	}, [recPlaylistId, recommendations, userId]);
+	}, [
+		getRecommendationsForTracksQuery.data,
+		getUserQuery.data?.userId,
+		recPlaylistId,
+	]);
 
 	const createPlaylistOnSave = async () => {
-		if (!userId) {
+		if (!getUserQuery.data.userId) {
 			return;
 		}
 
-		const name = `Recommended Tracks Based on ${playlist.name}`;
-		const { data } = await createPlaylist(userId, name);
+		const name = `Recommended Tracks Based on ${getPlaylistQuery.data.name}`;
+		const { data } = await createPlaylist(getUserQuery.data?.userId, name);
 		setRecPlaylistId(data.id);
 	};
 
 	return (
 		<Main>
-			{playlist && (
+			{getPlaylistQuery.data && (
 				<PlaylistHeading>
 					<h2>
 						Recommended Tracks Based On{" "}
-						<PlaylistLink to={`playlists/${playlist.id}`}>
-							{playlist.name}
+						<PlaylistLink to={`playlists/${getPlaylistQuery.data.id}`}>
+							{getPlaylistQuery.data.name}
 						</PlaylistLink>
 					</h2>
 					{isFollowing && recPlaylistId ? (
@@ -139,8 +179,8 @@ const Recommendations = (props) => {
 				</PlaylistHeading>
 			)}
 			<TracksContainer>
-				{recommendations &&
-					recommendations.tracks.map((track, i) => (
+				{getRecommendationsForTracksQuery.data &&
+					getRecommendationsForTracksQuery.data.tracks.map((track, i) => (
 						<TrackItem track={track} key={i} />
 					))}
 			</TracksContainer>
