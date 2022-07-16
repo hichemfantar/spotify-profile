@@ -20,7 +20,8 @@
 		"server": "node server",
 		"dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
 		"start": "node server",
-		"heroku-postbuild": "cd client/ && npm i && npm install --production && npm run build"
+		"heroku-postbuild": "cd client/ && npm i && npm install --production && npm run build",
+		"prettier": "npx prettier --write ."
 	},
 	"dependencies": {
 		"connect-history-api-fallback": "^2.0.0",
