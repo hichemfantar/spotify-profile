@@ -13,7 +13,6 @@
 	"bugs": {
 		"url": "https://github.com/hichemfantar/spotify-observer/issues"
 	},
-	"homepage": "https://github.com/hichemfantar/spotify-observer#readme",
 	"scripts": {
 		"client:install": "cd client && npm i",
 		"client": "cd client && npm run start",
