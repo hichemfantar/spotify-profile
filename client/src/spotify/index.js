@@ -31,7 +31,7 @@ const axiosClient = axios.create({
 // Refresh the token
 const refreshAccessToken = async () => {
 	try {
-		const { data } = await axios.get(
+		const { data } = await axiosClient.get(
 			`/refresh_token?refresh_token=${getLocalRefreshToken()}`
 		);
 		const { access_token } = data;
@@ -90,54 +90,44 @@ axiosClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
  * Get Current User's Profile
  * https://developer.spotify.com/documentation/web-api/reference/users-profile/get-current-users-profile/
  */
-export const getUser = () =>
-	axios.get("https://api.spotify.com/v1/me", { headers });
+export const getUser = () => axiosClient.get("https://api.spotify.com/v1/me");
 
 /**
  * Get User's Followed Artists
  * https://developer.spotify.com/documentation/web-api/reference/follow/get-followed/
  */
 export const getFollowing = () =>
-	axios.get("https://api.spotify.com/v1/me/following?type=artist", { headers });
+	axiosClient.get("https://api.spotify.com/v1/me/following?type=artist");
 
 /**
  * Get Current User's Recently Played Tracks
  * https://developer.spotify.com/documentation/web-api/reference/player/get-recently-played/
  */
 export const getRecentlyPlayed = () =>
-	axios.get("https://api.spotify.com/v1/me/player/recently-played", {
-		headers,
-	});
+	axiosClient.get("https://api.spotify.com/v1/me/player/recently-played");
 
 /**
  * Get a List of Current User's Playlists
  * https://developer.spotify.com/documentation/web-api/reference/playlists/get-a-list-of-current-users-playlists/
  */
 export const getPlaylists = () =>
-	axios.get("https://api.spotify.com/v1/me/playlists", { headers });
+	axiosClient.get("https://api.spotify.com/v1/me/playlists");
 
 /**
  * Get a User's Top Artists
  * https://developer.spotify.com/documentation/web-api/reference/personalization/get-users-top-artists-and-tracks/
  */
 export const getTopArtistsShort = () =>
-	axios.get(
-		"https://api.spotify.com/v1/me/top/artists?limit=50&time_range=short_term",
-		{
-			headers,
-		}
+	axiosClient.get(
+		"https://api.spotify.com/v1/me/top/artists?limit=50&time_range=short_term"
 	);
 export const getTopArtistsMedium = () =>
-	axios.get(
-		"https://api.spotify.com/v1/me/top/artists?limit=50&time_range=medium_term",
-		{
-			headers,
-		}
+	axiosClient.get(
+		"https://api.spotify.com/v1/me/top/artists?limit=50&time_range=medium_term"
 	);
 export const getTopArtistsLong = () =>
-	axios.get(
-		"https://api.spotify.com/v1/me/top/artists?limit=50&time_range=long_term",
-		{ headers }
+	axiosClient.get(
+		"https://api.spotify.com/v1/me/top/artists?limit=50&time_range=long_term"
 	);
 
 /**
@@ -145,21 +135,16 @@ export const getTopArtistsLong = () =>
  * https://developer.spotify.com/documentation/web-api/reference/personalization/get-users-top-artists-and-tracks/
  */
 export const getTopTracksShort = () =>
-	axios.get(
-		"https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=short_term",
-		{ headers }
+	axiosClient.get(
+		"https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=short_term"
 	);
 export const getTopTracksMedium = () =>
-	axios.get(
-		"https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=medium_term",
-		{
-			headers,
-		}
+	axiosClient.get(
+		"https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=medium_term"
 	);
 export const getTopTracksLong = () =>
-	axios.get(
-		"https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=long_term",
-		{ headers }
+	axiosClient.get(
+		"https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=long_term"
 	);
 
 /**
@@ -167,7 +152,7 @@ export const getTopTracksLong = () =>
  * https://developer.spotify.com/documentation/web-api/reference/artists/get-artist/
  */
 export const getArtist = (artistId) =>
-	axios.get(`https://api.spotify.com/v1/artists/${artistId}`, { headers });
+	axiosClient.get(`https://api.spotify.com/v1/artists/${artistId}`);
 
 /**
  * Follow an Artist
@@ -175,7 +160,7 @@ export const getArtist = (artistId) =>
  */
 export const followArtist = (artistId) => {
 	const url = `https://api.spotify.com/v1/me/following?type=artist&ids=${artistId}`;
-	return axios({ method: "put", url, headers });
+	return axiosClient.put(url);
 };
 
 /**
@@ -183,11 +168,8 @@ export const followArtist = (artistId) => {
  * https://developer.spotify.com/documentation/web-api/reference/follow/follow-artists-users/
  */
 export const doesUserFollowArtist = (artistId) =>
-	axios.get(
-		`https://api.spotify.com/v1/me/following/contains?type=artist&ids=${artistId}`,
-		{
-			headers,
-		}
+	axiosClient.get(
+		`https://api.spotify.com/v1/me/following/contains?type=artist&ids=${artistId}`
 	);
 
 /**
@@ -195,11 +177,8 @@ export const doesUserFollowArtist = (artistId) =>
  * https://developer.spotify.com/documentation/web-api/reference/follow/follow-artists-users/
  */
 export const doesUserFollowPlaylist = (playlistId, userId) =>
-	axios.get(
-		`https://api.spotify.com/v1/playlists/${playlistId}/followers/contains?ids=${userId}`,
-		{
-			headers,
-		}
+	axiosClient.get(
+		`https://api.spotify.com/v1/playlists/${playlistId}/followers/contains?ids=${userId}`
 	);
 
 /**
@@ -209,7 +188,7 @@ export const doesUserFollowPlaylist = (playlistId, userId) =>
 export const createPlaylist = (userId, name) => {
 	const url = `https://api.spotify.com/v1/users/${userId}/playlists`;
 	const data = JSON.stringify({ name });
-	return axios({ method: "post", url, headers, data });
+	return axiosClient.post(url, data);
 };
 
 /**
@@ -218,7 +197,7 @@ export const createPlaylist = (userId, name) => {
  */
 export const addTracksToPlaylist = (playlistId, uris) => {
 	const url = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?uris=${uris}`;
-	return axios({ method: "post", url, headers });
+	return axiosClient.post(url);
 };
 
 /**
@@ -227,7 +206,7 @@ export const addTracksToPlaylist = (playlistId, uris) => {
  */
 export const followPlaylist = (playlistId) => {
 	const url = `https://api.spotify.com/v1/playlists/${playlistId}/followers`;
-	return axios({ method: "put", url, headers });
+	return axiosClient.put(url);
 };
 
 /**
@@ -235,16 +214,14 @@ export const followPlaylist = (playlistId) => {
  * https://developer.spotify.com/documentation/web-api/reference/playlists/get-playlist/
  */
 export const getPlaylist = (playlistId) =>
-	axios.get(`https://api.spotify.com/v1/playlists/${playlistId}`, { headers });
+	axiosClient.get(`https://api.spotify.com/v1/playlists/${playlistId}`);
 
 /**
  * Get a Playlist's Tracks
  * https://developer.spotify.com/documentation/web-api/reference/playlists/get-playlists-tracks/
  */
 export const getPlaylistTracks = (playlistId) =>
-	axios.get(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
-		headers,
-	});
+	axiosClient.get(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`);
 
 /**
  * Return a comma separated string of track IDs from the given array of tracks
@@ -257,9 +234,9 @@ const getTrackIds = (tracks) => tracks.map(({ track }) => track.id).join(",");
  */
 export const getAudioFeaturesForTracks = (tracks) => {
 	const ids = getTrackIds(tracks);
-	return axios.get(`https://api.spotify.com/v1/audio-features?ids=${ids}`, {
-		headers,
-	});
+	return axiosClient.get(
+		`https://api.spotify.com/v1/audio-features?ids=${ids}`
+	);
 };
 
 /**
@@ -272,11 +249,8 @@ export const getRecommendationsForTracks = (tracks) => {
 	const seed_artists = "";
 	const seed_genres = "";
 
-	return axios.get(
-		`https://api.spotify.com/v1/recommendations?seed_tracks=${seed_tracks}&seed_artists=${seed_artists}&seed_genres=${seed_genres}`,
-		{
-			headers,
-		}
+	return axiosClient.get(
+		`https://api.spotify.com/v1/recommendations?seed_tracks=${seed_tracks}&seed_artists=${seed_artists}&seed_genres=${seed_genres}`
 	);
 };
 
@@ -285,58 +259,44 @@ export const getRecommendationsForTracks = (tracks) => {
  * https://developer.spotify.com/documentation/web-api/reference/tracks/get-track/
  */
 export const getTrack = (trackId) =>
-	axios.get(`https://api.spotify.com/v1/tracks/${trackId}`, { headers });
+	axiosClient.get(`https://api.spotify.com/v1/tracks/${trackId}`);
 
 /**
  * Get Audio Analysis for a Track
  * https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-analysis/
  */
 export const getTrackAudioAnalysis = (trackId) =>
-	axios.get(`https://api.spotify.com/v1/audio-analysis/${trackId}`, {
-		headers,
-	});
+	axiosClient.get(`https://api.spotify.com/v1/audio-analysis/${trackId}`);
 
 /**
  * Get Audio Features for a Track
  * https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-features/
  */
 export const getTrackAudioFeatures = (trackId) =>
-	axios.get(`https://api.spotify.com/v1/audio-features/${trackId}`, {
-		headers,
-	});
+	axiosClient.get(`https://api.spotify.com/v1/audio-features/${trackId}`);
 
 export const getUserInfo = () =>
-	axios
-		.all([
-			getUser(),
-			getFollowing(),
-			getPlaylists(),
-			getTopArtistsLong(),
-			getTopTracksLong(),
-		])
-		.then(
-			axios.spread(
-				(user, followedArtists, playlists, topArtists, topTracks) => ({
-					user: user.data,
-					followedArtists: followedArtists.data,
-					playlists: playlists.data,
-					topArtists: topArtists.data,
-					topTracks: topTracks.data,
-				})
-			)
-		);
+	Promise.all([
+		getUser(),
+		getFollowing(),
+		getPlaylists(),
+		getTopArtistsLong(),
+		getTopTracksLong(),
+	]).then(([user, followedArtists, playlists, topArtists, topTracks]) => ({
+		user: user.data,
+		followedArtists: followedArtists.data,
+		playlists: playlists.data,
+		topArtists: topArtists.data,
+		topTracks: topTracks.data,
+	}));
 
 export const getTrackInfo = (trackId) =>
-	axios
-		.all([
-			getTrack(trackId),
-			getTrackAudioAnalysis(trackId),
-			getTrackAudioFeatures(trackId),
-		])
-		.then(
-			axios.spread((track, audioAnalysis, audioFeatures) => ({
-				track: track.data,
-				audioAnalysis: audioAnalysis.data,
-				audioFeatures: audioFeatures.data,
-			}))
-		);
+	Promise.all([
+		getTrack(trackId),
+		getTrackAudioAnalysis(trackId),
+		getTrackAudioFeatures(trackId),
+	]).then(([track, audioAnalysis, audioFeatures]) => ({
+		track: track.data,
+		audioAnalysis: audioAnalysis.data,
+		audioFeatures: audioFeatures.data,
+	}));

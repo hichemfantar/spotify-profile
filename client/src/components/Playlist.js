@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import PropTypes from "prop-types";
 import { getPlaylist, getAudioFeaturesForTracks } from "../spotify";
 import { catchErrors } from "../utils";
@@ -75,7 +75,7 @@ const TotalTracks = styled.p`
 `;
 
 const Playlist = (props) => {
-	const { playlistId } = props;
+	const { playlistId } = useParams();
 
 	const [playlist, setPlaylist] = useState(null);
 	const [audioFeatures, setAudioFeatures] = useState(null);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import PropTypes from "prop-types";
 import {
 	getPlaylist,
@@ -45,7 +45,7 @@ const PlaylistLink = styled(Link)`
 `;
 
 const Recommendations = (props) => {
-	const { playlistId } = props;
+	const { playlistId } = useParams();
 
 	const [playlist, setPlaylist] = useState(null);
 	const [recommendations, setRecommmendations] = useState(null);
