@@ -1,20 +1,20 @@
 import React from "react";
 
-import ScrollToTop from "./ScrollToTop";
+import Artist from "./Artist";
 import Nav from "./Nav";
-import User from "./User";
+import Playlist from "./Playlist";
+import Playlists from "./Playlists";
 import RecentlyPlayed from "./RecentlyPlayed";
+import Recommendations from "./Recommendations";
+import ScrollToTop from "./ScrollToTop";
 import TopArtists from "./TopArtists";
 import TopTracks from "./TopTracks";
-import Playlists from "./Playlists";
-import Playlist from "./Playlist";
-import Recommendations from "./Recommendations";
 import Track from "./Track";
-import Artist from "./Artist";
+import User from "./User";
 
+import { Route, Routes } from "react-router-dom";
 import styled from "styled-components/macro";
-import { theme, media } from "../styles";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { media, theme } from "../styles";
 
 const SiteWrapper = styled.div`
 	padding-left: ${theme.navWidth};
@@ -26,26 +26,26 @@ const SiteWrapper = styled.div`
 
 const Profile = () => (
 	<SiteWrapper>
-		<BrowserRouter>
-			<Nav />
-			<ScrollToTop />
-			<Routes>
-				<Route path="/" element={<User />} />
-				<Route path="recent" element={<RecentlyPlayed />} />
-				<Route path="artists" element={<TopArtists />} />
-				<Route path="artist/:artistId" element={<Artist />} />
-				<Route path="tracks" element={<TopTracks />} />
-				<Route path="track/:trackId" element={<Track />} />
-				<Route path="playlists" element={<Playlists />} />
-				<Route path="playlists/:playlistId" element={<Playlist />} />
-				<Route
-					path="recommendations/:playlistId"
-					element={<Recommendations />}
-				/>
+		<Nav />
+		<ScrollToTop />
+		<Routes>
+			<Route path="/" element={<User />} />
 
-				<Route path="*" element={<User />} />
-			</Routes>
-		</BrowserRouter>
+			<Route path="recent" element={<RecentlyPlayed />} />
+
+			<Route path="artists" element={<TopArtists />} />
+			<Route path="artist/:artistId" element={<Artist />} />
+
+			<Route path="tracks" element={<TopTracks />} />
+			<Route path="track/:trackId" element={<Track />} />
+
+			<Route path="playlists" element={<Playlists />} />
+			<Route path="playlists/:playlistId" element={<Playlist />} />
+
+			<Route path="recommendations/:playlistId" element={<Recommendations />} />
+
+			<Route path="*" element={<User />} />
+		</Routes>
 	</SiteWrapper>
 );
 
