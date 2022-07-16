@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
 import PropTypes from "prop-types";
-import { getPlaylist, getAudioFeaturesForTracks } from "../spotify";
-import { catchErrors } from "../utils";
+import React from "react";
+import { Link, useParams } from "react-router-dom";
+import { useGetAudioFeaturesForTracks, useGetPlaylist } from "../spotify";
 
+import FeatureChart from "./FeatureChart";
 import Loader from "./Loader";
 import TrackItem from "./TrackItem";
-import FeatureChart from "./FeatureChart";
 
 import styled from "styled-components/macro";
-import { theme, mixins, media, Main } from "../styles";
+import { Main, media, mixins, theme } from "../styles";
 const { colors, fontSizes, spacing } = theme;
 
 const PlaylistContainer = styled.div`
@@ -77,64 +76,80 @@ const TotalTracks = styled.p`
 const Playlist = (props) => {
 	const { playlistId } = useParams();
 
-	const [playlist, setPlaylist] = useState(null);
-	const [audioFeatures, setAudioFeatures] = useState(null);
+	// const [playlist, setPlaylist] = useState(null);
+	// const [audioFeatures, setAudioFeatures] = useState(null);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			const { data } = await getPlaylist(playlistId);
-			setPlaylist(data);
-		};
-		catchErrors(fetchData());
-	}, [playlistId]);
+	const getPlaylistQuery = useGetPlaylist(playlistId);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			if (playlist) {
-				const { data } = await getAudioFeaturesForTracks(playlist.tracks.items);
-				setAudioFeatures(data);
-			}
-		};
-		catchErrors(fetchData());
-	}, [playlist]);
+	const getAudioFeaturesForTracksQuery = useGetAudioFeaturesForTracks(
+		getPlaylistQuery.data?.tracks?.items,
+		getPlaylistQuery.data
+	);
+
+	// useEffect(() => {
+	// 	const fetchData = async () => {
+	// 		const { data } = await getPlaylist(playlistId);
+	// 		setPlaylist(data);
+	// 	};
+	// 	catchErrors(fetchData());
+	// }, [playlistId]);
+
+	// useEffect(() => {
+	// 	const fetchData = async () => {
+	// 		if (getPlaylistQuery.data) {
+	// 			const { data } = await getAudioFeaturesForTracks(
+	// 				getPlaylistQuery.data.tracks.items
+	// 			);
+	// 			setAudioFeatures(data);
+	// 		}
+	// 	};
+	// 	catchErrors(fetchData());
+	// }, [getPlaylistQuery.data]);
 
 	return (
 		<React.Fragment>
-			{playlist ? (
+			{getPlaylistQuery.data ? (
 				<Main>
 					<PlaylistContainer>
 						<Left>
-							{playlist.images.length && (
+							{getPlaylistQuery.data.images.length && (
 								<PlaylistCover>
-									<img src={playlist.images[0].url} alt="Album Art" />
+									<img
+										src={getPlaylistQuery.data.images[0].url}
+										alt="Album Art"
+									/>
 								</PlaylistCover>
 							)}
 
 							<a
-								href={playlist.external_urls.spotify}
+								href={getPlaylistQuery.data.external_urls.spotify}
 								target="_blank"
 								rel="noopener noreferrer"
 							>
-								<Name>{playlist.name}</Name>
+								<Name>{getPlaylistQuery.data.name}</Name>
 							</a>
 
-							<Owner>By {playlist.owner.display_name}</Owner>
+							<Owner>By {getPlaylistQuery.data.owner.display_name}</Owner>
 
-							{playlist.description && (
+							{getPlaylistQuery.data.description && (
 								<Description
-									dangerouslySetInnerHTML={{ __html: playlist.description }}
+									dangerouslySetInnerHTML={{
+										__html: getPlaylistQuery.data.description,
+									}}
 								/>
 							)}
 
-							<TotalTracks>{playlist.tracks.total} Tracks</TotalTracks>
+							<TotalTracks>
+								{getPlaylistQuery.data.tracks.total} Tracks
+							</TotalTracks>
 
-							<RecButton to={`/recommendations/${playlist.id}`}>
+							<RecButton to={`/recommendations/${getPlaylistQuery.data.id}`}>
 								Get Recommendations
 							</RecButton>
 
-							{audioFeatures && (
+							{getAudioFeaturesForTracksQuery.data && (
 								<FeatureChart
-									features={audioFeatures.audio_features}
+									features={getAudioFeaturesForTracksQuery.data.audio_features}
 									// type="horizontalBar"
 									indexAxis="y"
 								/>
@@ -142,8 +157,8 @@ const Playlist = (props) => {
 						</Left>
 						<Right>
 							<ul>
-								{playlist.tracks &&
-									playlist.tracks.items.map(({ track }, i) => (
+								{getPlaylistQuery.data.tracks &&
+									getPlaylistQuery.data.tracks.items.map(({ track }, i) => (
 										<TrackItem track={track} key={i} />
 									))}
 							</ul>

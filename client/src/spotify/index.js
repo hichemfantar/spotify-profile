@@ -341,10 +341,17 @@ export const getAudioFeaturesForTracks = (tracks) => {
 	return axiosSpotifyClient.get(`audio-features?ids=${ids}`);
 };
 
-export function useGetAudioFeaturesForTracks(tracks) {
-	return useQuery(["AudioFeaturesForTracks", tracks], async () => {
-		return getAudioFeaturesForTracks(tracks).then((res) => res.data);
-	});
+export function useGetAudioFeaturesForTracks(tracks, enabled) {
+	return useQuery(
+		["AudioFeaturesForTracks", tracks, enabled],
+		async () => {
+			return getAudioFeaturesForTracks(tracks).then((res) => res.data);
+		},
+		{
+			// The query will not execute until the userId exists
+			enabled: !!enabled,
+		}
+	);
 }
 
 /**
@@ -362,10 +369,16 @@ export const getRecommendationsForTracks = (tracks) => {
 	);
 };
 
-export function useGetRecommendationsForTracks(tracks) {
-	return useQuery(["RecommendationsForTracks", tracks], async () => {
-		return getRecommendationsForTracks(tracks).then((res) => res.data);
-	});
+export function useGetRecommendationsForTracks(tracks, enabled) {
+	return useQuery(
+		["RecommendationsForTracks", tracks, enabled],
+		async () => {
+			return getRecommendationsForTracks(tracks).then((res) => res.data);
+		},
+		{
+			enabled: !!enabled,
+		}
+	);
 }
 
 /**

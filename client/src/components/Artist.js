@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { formatWithCommas, catchErrors } from "../utils";
-import { getArtist } from "../spotify";
+import React from "react";
+import { useGetArtist } from "../spotify";
+import { formatWithCommas } from "../utils";
 
 import Loader from "./Loader";
 
-import styled from "styled-components/macro";
-import { theme, mixins, media, Main } from "../styles";
 import { useParams } from "react-router-dom";
+import styled from "styled-components/macro";
+import { Main, media, mixins, theme } from "../styles";
 const { colors, fontSizes, spacing } = theme;
 
 const ArtistContainer = styled(Main)`
@@ -67,43 +67,46 @@ const NumLabel = styled.p`
 
 const Artist = (props) => {
 	const { artistId } = useParams();
-	const [artist, setArtist] = useState(null);
+	// const [artist, setArtist] = useState(null);
+	const getArtistQuery = useGetArtist(artistId);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			const { data } = await getArtist(artistId);
-			setArtist(data);
-		};
-		catchErrors(fetchData());
-	}, [artistId]);
+	// useEffect(() => {
+	// 	const fetchData = async () => {
+	// 		const { data } = await getArtist(artistId);
+	// 		setArtist(data);
+	// 	};
+	// 	catchErrors(fetchData());
+	// }, [artistId]);
 
 	return (
 		<React.Fragment>
-			{artist ? (
+			{getArtistQuery.data ? (
 				<ArtistContainer>
 					<Artwork>
-						<img src={artist.images[0].url} alt="Artist Artwork" />
+						<img src={getArtistQuery.data.images[0].url} alt="Artist Artwork" />
 					</Artwork>
 					<div>
-						<ArtistName>{artist.name}</ArtistName>
+						<ArtistName>{getArtistQuery.data.name}</ArtistName>
 						<Stats>
 							<Stat>
-								<Number>{formatWithCommas(artist.followers.total)}</Number>
+								<Number>
+									{formatWithCommas(getArtistQuery.data.followers.total)}
+								</Number>
 								<NumLabel>Followers</NumLabel>
 							</Stat>
-							{artist.genres && (
+							{getArtistQuery.data.genres && (
 								<Stat>
 									<Number>
-										{artist.genres.map((genre) => (
+										{getArtistQuery.data.genres.map((genre) => (
 											<Genre key={genre}>{genre}</Genre>
 										))}
 									</Number>
 									<NumLabel>Genres</NumLabel>
 								</Stat>
 							)}
-							{artist.popularity && (
+							{getArtistQuery.data.popularity && (
 								<Stat>
-									<Number>{artist.popularity}%</Number>
+									<Number>{getArtistQuery.data.popularity}%</Number>
 									<NumLabel>Popularity</NumLabel>
 								</Stat>
 							)}

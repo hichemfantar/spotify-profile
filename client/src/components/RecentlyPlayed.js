@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { getRecentlyPlayed } from "../spotify";
-import { catchErrors } from "../utils";
+import React from "react";
+import { useGetRecentlyPlayed } from "../spotify";
 
 import Loader from "./Loader";
 import TrackItem from "./TrackItem";
@@ -13,22 +12,24 @@ const TracksContainer = styled.ul`
 `;
 
 const RecentlyPlayed = () => {
-	const [recentlyPlayed, setRecentlyPlayed] = useState(null);
+	// const [recentlyPlayed, setRecentlyPlayed] = useState(null);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			const { data } = await getRecentlyPlayed();
-			setRecentlyPlayed(data);
-		};
-		catchErrors(fetchData());
-	}, []);
+	const getRecentlyPlayedQuery = useGetRecentlyPlayed();
+
+	// useEffect(() => {
+	// 	const fetchData = async () => {
+	// 		const { data } = await getRecentlyPlayed();
+	// 		setRecentlyPlayed(data);
+	// 	};
+	// 	catchErrors(fetchData());
+	// }, []);
 
 	return (
 		<Main>
 			<h2>Recently Played Tracks</h2>
 			<TracksContainer>
-				{recentlyPlayed ? (
-					recentlyPlayed.items.map(({ track }, i) => (
+				{getRecentlyPlayedQuery.data ? (
+					getRecentlyPlayedQuery.data.items.map(({ track }, i) => (
 						<TrackItem track={track} key={i} />
 					))
 				) : (

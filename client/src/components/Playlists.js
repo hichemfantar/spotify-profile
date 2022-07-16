@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import { getPlaylists } from "../spotify";
-import { catchErrors } from "../utils";
+import { useGetPlaylists } from "../spotify";
 
-import Loader from "./Loader";
 import { IconMusic } from "./icons";
+import Loader from "./Loader";
 
 import styled from "styled-components/macro";
-import { theme, mixins, media, Main } from "../styles";
+import { Main, media, mixins, theme } from "../styles";
 const { colors, fontSizes, spacing } = theme;
 
 const Wrapper = styled.div`
@@ -98,44 +97,48 @@ const TotalTracks = styled.div`
 `;
 
 const Playlists = () => {
-	const [playlists, setPlaylists] = useState(null);
+	// const [playlists, setPlaylists] = useState(null);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			const { data } = await getPlaylists();
-			setPlaylists(data);
-		};
-		catchErrors(fetchData());
-	}, []);
+	const getPlaylistsQuery = useGetPlaylists();
+
+	// useEffect(() => {
+	// 	const fetchData = async () => {
+	// 		const { data } = await getPlaylists();
+	// 		setPlaylists(data);
+	// 	};
+	// 	catchErrors(fetchData());
+	// }, []);
 
 	return (
 		<Main>
 			<h2>Your Playlists</h2>
 			<Wrapper>
 				<PlaylistsContainer>
-					{playlists ? (
-						playlists.items.map(({ id, images, name, tracks }, i) => (
-							<Playlist key={i}>
-								<PlaylistCover to={id}>
-									{images.length ? (
-										<PlaylistImage src={images[0].url} alt="Album Art" />
-									) : (
-										<PlaceholderArtwork>
-											<PlaceholderContent>
-												<IconMusic />
-											</PlaceholderContent>
-										</PlaceholderArtwork>
-									)}
-									<PlaylistMask>
-										<i className="fas fa-info-circle" />
-									</PlaylistMask>
-								</PlaylistCover>
-								<div>
-									<PlaylistName to={id}>{name}</PlaylistName>
-									<TotalTracks>{tracks.total} Tracks</TotalTracks>
-								</div>
-							</Playlist>
-						))
+					{getPlaylistsQuery.data ? (
+						getPlaylistsQuery.data.items.map(
+							({ id, images, name, tracks }, i) => (
+								<Playlist key={i}>
+									<PlaylistCover to={id}>
+										{images.length ? (
+											<PlaylistImage src={images[0].url} alt="Album Art" />
+										) : (
+											<PlaceholderArtwork>
+												<PlaceholderContent>
+													<IconMusic />
+												</PlaceholderContent>
+											</PlaceholderArtwork>
+										)}
+										<PlaylistMask>
+											<i className="fas fa-info-circle" />
+										</PlaylistMask>
+									</PlaylistCover>
+									<div>
+										<PlaylistName to={id}>{name}</PlaylistName>
+										<TotalTracks>{tracks.total} Tracks</TotalTracks>
+									</div>
+								</Playlist>
+							)
+						)
 					) : (
 						<Loader />
 					)}
