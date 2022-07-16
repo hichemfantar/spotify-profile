@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useQuery } from "react-query";
 import { getHashParams } from "../utils";
 
 // TOKENS ******************************************************************************************
@@ -290,6 +291,24 @@ export const getUserInfo = () =>
 		topTracks: topTracks.data,
 	}));
 
+export function useUserInfo() {
+	return useQuery(["user-info"], async () => {
+		return Promise.all([
+			getUser(),
+			getFollowing(),
+			getPlaylists(),
+			getTopArtistsLong(),
+			getTopTracksLong(),
+		]).then(([user, followedArtists, playlists, topArtists, topTracks]) => ({
+			user: user.data,
+			followedArtists: followedArtists.data,
+			playlists: playlists.data,
+			topArtists: topArtists.data,
+			topTracks: topTracks.data,
+		}));
+	});
+}
+
 export const getTrackInfo = (trackId) =>
 	Promise.all([
 		getTrack(trackId),
@@ -300,3 +319,17 @@ export const getTrackInfo = (trackId) =>
 		audioAnalysis: audioAnalysis.data,
 		audioFeatures: audioFeatures.data,
 	}));
+
+export function useTrackInfo(trackId) {
+	return useQuery(["track-info", trackId], async () => {
+		return Promise.all([
+			getTrack(trackId),
+			getTrackAudioAnalysis(trackId),
+			getTrackAudioFeatures(trackId),
+		]).then(([track, audioAnalysis, audioFeatures]) => ({
+			track: track.data,
+			audioAnalysis: audioAnalysis.data,
+			audioFeatures: audioFeatures.data,
+		}));
+	});
+}
