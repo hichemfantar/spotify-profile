@@ -33,26 +33,17 @@ const Profile = () => (
 				<Route path="/" element={<User />} />
 				<Route path="recent" element={<RecentlyPlayed />} />
 				<Route path="artists" element={<TopArtists />} />
+				<Route path="artist/:artistId" element={<Artist />} />
 				<Route path="tracks" element={<TopTracks />} />
+				<Route path="track/:trackId" element={<Track />} />
 				<Route path="playlists" element={<Playlists />} />
 				<Route path="playlists/:playlistId" element={<Playlist />} />
 				<Route
 					path="recommendations/:playlistId"
 					element={<Recommendations />}
 				/>
-				<Route path="track/:trackId" element={<Track />} />
-				<Route path="artist/:artistId" element={<Artist />} />
 
 				<Route path="*" element={<User />} />
-				{/* <User path="/" />
-					<RecentlyPlayed path="recent" />
-					<TopArtists path="artists" />
-					<TopTracks path="tracks" />
-					<Playlists path="playlists" />
-					<Playlist path="playlists/:playlistId" />
-					<Recommendations path="recommendations/:playlistId" />
-					<Track path="track/:trackId" />
-					<Artist path="artist/:artistId" /> */}
 			</Routes>
 		</BrowserRouter>
 	</SiteWrapper>

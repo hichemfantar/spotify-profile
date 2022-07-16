@@ -1,10 +1,12 @@
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
-import Chart from "chart.js";
+import { Chart, registerables } from "chart.js";
 
 import styled from "styled-components/macro";
 import { theme } from "../styles";
 const { fonts } = theme;
+
+Chart.register(...registerables);
 
 const properties = [
 	"acousticness",
@@ -17,14 +19,16 @@ const properties = [
 ];
 
 const Container = styled.div`
-	position: relative;
+	/* position: relative; */
 	width: 100%;
 	max-width: 700px;
+	margin: 0 auto;
+	margin-top: -30px;
 
-	#chart {
+	/* #chart {
 		margin: 0 auto;
 		margin-top: -30px;
-	}
+	} */
 `;
 
 const FeatureChart = (props) => {
@@ -41,13 +45,15 @@ const FeatureChart = (props) => {
 			return dataset;
 		};
 
+		let myChart;
+
 		const createChart = (dataset) => {
-			const { type } = props;
+			const { type, indexAxis } = props;
 			const ctx = document.getElementById("chart");
 			const labels = Object.keys(dataset);
 			const data = Object.values(dataset);
 
-			new Chart(ctx, {
+			return new Chart(ctx, {
 				type: type || "bar",
 				data: {
 					labels,
@@ -78,6 +84,7 @@ const FeatureChart = (props) => {
 					],
 				},
 				options: {
+					indexAxis: indexAxis || "x",
 					layout: {
 						padding: {
 							left: 0,
@@ -86,41 +93,45 @@ const FeatureChart = (props) => {
 							bottom: 0,
 						},
 					},
-					title: {
-						display: true,
-						text: `Audio Features`,
-						fontSize: 18,
-						fontFamily: `${fonts.primary}`,
-						fontColor: "#ffffff",
-						padding: 30,
-					},
-					legend: {
-						display: false,
+					plugins: {
+						title: {
+							display: true,
+							text: `Audio Features`,
+							font: {
+								size: 18,
+								family: `${fonts.primary}`,
+							},
+							color: "#ffffff",
+							padding: 30,
+						},
+						legend: {
+							display: false,
+						},
 					},
 					scales: {
-						xAxes: [
-							{
-								gridLines: {
-									color: "rgba(255, 255, 255, 0.3)",
-								},
-								ticks: {
-									fontFamily: `${fonts.primary}`,
-									fontSize: 12,
+						x: {
+							grid: {
+								color: "rgba(255, 255, 255, 0.3)",
+							},
+							ticks: {
+								font: {
+									size: 12,
+									family: `${fonts.primary}`,
 								},
 							},
-						],
-						yAxes: [
-							{
-								gridLines: {
-									color: "rgba(255, 255, 255, 0.3)",
-								},
-								ticks: {
-									beginAtZero: true,
-									fontFamily: `${fonts.primary}`,
-									fontSize: 12,
+						},
+						y: {
+							grid: {
+								color: "rgba(255, 255, 255, 0.3)",
+							},
+							ticks: {
+								font: {
+									size: 12,
+									family: `${fonts.primary}`,
 								},
 							},
-						],
+							beginAtZero: true,
+						},
 					},
 				},
 			});
@@ -129,10 +140,14 @@ const FeatureChart = (props) => {
 		const parseData = () => {
 			const { features } = props;
 			const dataset = createDataset(features);
-			createChart(dataset);
+			myChart = createChart(dataset);
 		};
 
 		parseData();
+
+		return () => {
+			myChart.destroy();
+		};
 	}, [props]);
 
 	return (

@@ -229,7 +229,7 @@ const Track = (props) => {
 								</Feature>
 							</Features>
 
-							<FeatureChart features={audioFeatures} type="" />
+							<FeatureChart features={audioFeatures} type="" indexAxis="x" />
 
 							<DescriptionLink
 								href="https://developer.spotify.com/documentation/web-api/reference/tracks/get-audio-features/"

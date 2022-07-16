@@ -119,7 +119,7 @@ const Recommendations = (props) => {
 				<PlaylistHeading>
 					<h2>
 						Recommended Tracks Based On{" "}
-						<PlaylistLink to={`/playlists/${playlist.id}`}>
+						<PlaylistLink to={`playlists/${playlist.id}`}>
 							{playlist.name}
 						</PlaylistLink>
 					</h2>

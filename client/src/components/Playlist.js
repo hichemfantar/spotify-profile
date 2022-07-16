@@ -135,7 +135,8 @@ const Playlist = (props) => {
 							{audioFeatures && (
 								<FeatureChart
 									features={audioFeatures.audio_features}
-									type="horizontalBar"
+									// type="horizontalBar"
+									indexAxis="y"
 								/>
 							)}
 						</Left>
