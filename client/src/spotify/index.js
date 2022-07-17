@@ -141,23 +141,32 @@ export function useGetPlaylists() {
  * Get a User's Top Artists
  * https://developer.spotify.com/documentation/web-api/reference/personalization/get-users-top-artists-and-tracks/
  */
-export const getTopArtistsShort = () =>
-	axiosSpotifyClient.get("me/top/artists?limit=50&time_range=short_term");
+export const getTopArtists = (range) =>
+	axiosSpotifyClient.get(`me/top/artists?limit=50&time_range=${range}_term`);
 
-export function useGetTopArtistsShort() {
-	return useQuery(["TopArtistsShort"], async () => {
-		return getTopArtistsShort().then((res) => res.data);
+export function useGetTopArtists(range) {
+	return useQuery(["TopArtists", range], async () => {
+		return getTopArtists(range).then((res) => res.data);
 	});
 }
 
-export const getTopArtistsMedium = () =>
-	axiosSpotifyClient.get("me/top/artists?limit=50&time_range=medium_term");
+// export const getTopArtistsShort = () =>
+// 	axiosSpotifyClient.get("me/top/artists?limit=50&time_range=short_term");
 
-export function useGetTopArtistsMedium() {
-	return useQuery(["TopArtistsMedium"], async () => {
-		return getTopArtistsMedium().then((res) => res.data);
-	});
-}
+// export function useGetTopArtistsShort() {
+// 	return useQuery(["TopArtistsShort"], async () => {
+// 		return getTopArtistsShort().then((res) => res.data);
+// 	});
+// }
+
+// export const getTopArtistsMedium = () =>
+// 	axiosSpotifyClient.get("me/top/artists?limit=50&time_range=medium_term");
+
+// export function useGetTopArtistsMedium() {
+// 	return useQuery(["TopArtistsMedium"], async () => {
+// 		return getTopArtistsMedium().then((res) => res.data);
+// 	});
+// }
 
 export const getTopArtistsLong = () =>
 	axiosSpotifyClient.get("me/top/artists?limit=50&time_range=long_term");
@@ -176,7 +185,7 @@ export const getTopTracks = (range) =>
 	axiosSpotifyClient.get(`me/top/tracks?limit=50&time_range=${range}_term`);
 
 export function useGetTopTracks(range) {
-	return useQuery(["TopTracksShort", range], async () => {
+	return useQuery(["TopTracks", range], async () => {
 		return getTopTracks(range).then((res) => res.data);
 	});
 }

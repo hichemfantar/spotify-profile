@@ -1,17 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import {
-	getTopArtistsShort,
-	getTopArtistsMedium,
-	getTopArtistsLong,
-} from "../spotify";
+import { useGetTopArtists } from "../spotify";
 import { catchErrors } from "../utils";
 
 import { IconInfo } from "./icons";
 import Loader from "./Loader";
 
 import styled from "styled-components/macro";
-import { theme, mixins, media, Main } from "../styles";
+import { Main, media, mixins, theme } from "../styles";
 const { colors, fontSizes, spacing } = theme;
 
 const Header = styled.header`
@@ -129,26 +125,27 @@ const ArtistName = styled.a`
 `;
 
 const TopArtists = () => {
-	const [topArtists, setTopArtists] = useState(null);
+	// const [topArtists, setTopArtists] = useState(null);
 	const [activeRange, setActiveRange] = useState("long");
+	const getTopArtistsQuery = useGetTopArtists(activeRange);
 
-	const apiCalls = {
-		long: getTopArtistsLong(),
-		medium: getTopArtistsMedium(),
-		short: getTopArtistsShort(),
-	};
+	// const apiCalls = {
+	// 	long: getTopArtistsLong(),
+	// 	medium: getTopArtistsMedium(),
+	// 	short: getTopArtistsShort(),
+	// };
 
-	useEffect(() => {
-		const fetchData = async () => {
-			const { data } = await getTopArtistsLong();
-			setTopArtists(data);
-		};
-		catchErrors(fetchData());
-	}, []);
+	// useEffect(() => {
+	// 	const fetchData = async () => {
+	// 		const { data } = await getTopArtistsLong();
+	// 		setTopArtists(data);
+	// 	};
+	// 	catchErrors(fetchData());
+	// }, []);
 
 	const changeRange = async (range) => {
-		const { data } = await apiCalls[range];
-		setTopArtists(data);
+		// const { data } = await apiCalls[range];
+		// setTopArtists(data);
 		setActiveRange(range);
 	};
 
@@ -180,24 +177,26 @@ const TopArtists = () => {
 				</Ranges>
 			</Header>
 			<ArtistsContainer>
-				{topArtists ? (
-					topArtists.items.map(({ id, external_urls, images, name }, i) => (
-						<Artist key={i}>
-							<ArtistArtwork to={`/artist/${id}`}>
-								{images.length && <img src={images[1].url} alt="Artist" />}
-								<Mask>
-									<IconInfo />
-								</Mask>
-							</ArtistArtwork>
-							<ArtistName
-								href={external_urls.spotify}
-								target="_blank"
-								rel="noopener noreferrer"
-							>
-								{name}
-							</ArtistName>
-						</Artist>
-					))
+				{getTopArtistsQuery.data ? (
+					getTopArtistsQuery.data?.items.map(
+						({ id, external_urls, images, name }, i) => (
+							<Artist key={i}>
+								<ArtistArtwork to={`/artist/${id}`}>
+									{images.length && <img src={images[1].url} alt="Artist" />}
+									<Mask>
+										<IconInfo />
+									</Mask>
+								</ArtistArtwork>
+								<ArtistName
+									href={external_urls.spotify}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{name}
+								</ArtistName>
+							</Artist>
+						)
+					)
 				) : (
 					<Loader />
 				)}
