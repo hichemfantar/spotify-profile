@@ -1,16 +1,12 @@
-import React, { useState, useEffect } from "react";
-import {
-	getTopTracksShort,
-	getTopTracksMedium,
-	getTopTracksLong,
-} from "../spotify";
+import React, { useState } from "react";
+import { useGetTopTracks } from "../spotify";
 import { catchErrors } from "../utils";
 
 import Loader from "./Loader";
 import TrackItem from "./TrackItem";
 
 import styled from "styled-components/macro";
-import { theme, mixins, media, Main } from "../styles";
+import { Main, media, mixins, theme } from "../styles";
 const { colors, fontSizes } = theme;
 
 const Header = styled.header`
@@ -52,26 +48,28 @@ const TracksContainer = styled.ul`
 `;
 
 const TopTracks = () => {
-	const [topTracks, setTopTracks] = useState(null);
+	// const [topTracks, setTopTracks] = useState(null);
 	const [activeRange, setActiveRange] = useState("long");
 
-	const apiCalls = {
-		long: getTopTracksLong(),
-		medium: getTopTracksMedium(),
-		short: getTopTracksShort(),
-	};
+	const getTopTracksQuery = useGetTopTracks(activeRange);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			const { data } = await getTopTracksLong();
-			setTopTracks(data);
-		};
-		catchErrors(fetchData());
-	}, []);
+	// const apiCalls = {
+	// 	long: getTopTracksLong(),
+	// 	medium: getTopTracksMedium(),
+	// 	short: getTopTracksShort(),
+	// };
+
+	// useEffect(() => {
+	// 	const fetchData = async () => {
+	// 		const { data } = await getTopTracksLong();
+	// 		setTopTracks(data);
+	// 	};
+	// 	catchErrors(fetchData());
+	// }, []);
 
 	const changeRange = async (range) => {
-		const { data } = await apiCalls[range];
-		setTopTracks(data);
+		// const { data } = await apiCalls[range];
+		// setTopTracks(data);
 		setActiveRange(range);
 	};
 
@@ -103,8 +101,10 @@ const TopTracks = () => {
 				</Ranges>
 			</Header>
 			<TracksContainer>
-				{topTracks ? (
-					topTracks.items.map((track, i) => <TrackItem track={track} key={i} />)
+				{getTopTracksQuery.data ? (
+					getTopTracksQuery.data?.items.map((track, i) => (
+						<TrackItem track={track} key={i} />
+					))
 				) : (
 					<Loader />
 				)}

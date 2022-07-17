@@ -172,23 +172,32 @@ export function useGetTopArtistsLong() {
  * Get a User's Top Tracks
  * https://developer.spotify.com/documentation/web-api/reference/personalization/get-users-top-artists-and-tracks/
  */
-export const getTopTracksShort = () =>
-	axiosSpotifyClient.get("me/top/tracks?limit=50&time_range=short_term");
+export const getTopTracks = (range) =>
+	axiosSpotifyClient.get(`me/top/tracks?limit=50&time_range=${range}_term`);
 
-export function useGetTopTracksShort() {
-	return useQuery(["TopTracksShort"], async () => {
-		return getTopTracksShort().then((res) => res.data);
+export function useGetTopTracks(range) {
+	return useQuery(["TopTracksShort", range], async () => {
+		return getTopTracks(range).then((res) => res.data);
 	});
 }
 
-export const getTopTracksMedium = () =>
-	axiosSpotifyClient.get("me/top/tracks?limit=50&time_range=medium_term");
+// export const getTopTracksShort = () =>
+// 	axiosSpotifyClient.get("me/top/tracks?limit=50&time_range=short_term");
 
-export function useGetTopTracksMedium() {
-	return useQuery(["TopTracksMedium"], async () => {
-		return getTopTracksMedium().then((res) => res.data);
-	});
-}
+// export function useGetTopTracksShort() {
+// 	return useQuery(["TopTracksShort"], async () => {
+// 		return getTopTracksShort().then((res) => res.data);
+// 	});
+// }
+
+// export const getTopTracksMedium = () =>
+// 	axiosSpotifyClient.get("me/top/tracks?limit=50&time_range=medium_term");
+
+// export function useGetTopTracksMedium() {
+// 	return useQuery(["TopTracksMedium"], async () => {
+// 		return getTopTracksMedium().then((res) => res.data);
+// 	});
+// }
 
 export const getTopTracksLong = () =>
 	axiosSpotifyClient.get("me/top/tracks?limit=50&time_range=long_term");
