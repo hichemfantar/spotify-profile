@@ -2,11 +2,11 @@ import PropTypes from "prop-types";
 import React, { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
-	addTracksToPlaylist,
-	createPlaylist,
 	doesUserFollowPlaylist,
 	followPlaylist,
 	getTrackIds,
+	useAddTracksToPlaylist,
+	useCreatePlaylist,
 	useGetPlaylist,
 	useGetRecommendationsForTracks,
 	useGetUser,
@@ -107,20 +107,27 @@ const Recommendations = () => {
 	// }, [getPlaylistQuery.data]);
 
 	// If recPlaylistId has been set, add tracks to playlist and follow
+	const addTracksToPlaylistMutation = useAddTracksToPlaylist();
+
 	useMemo(() => {
 		const isUserFollowingPlaylist = async (plistId) => {
 			const { data } = await doesUserFollowPlaylist(
 				plistId,
-				getUserQuery.data?.userId
+				getUserQuery.data?.id
 			);
 			setIsFollowing(data[0]);
 		};
 
 		const addTracksAndFollow = async () => {
-			const uris = getRecommendationsForTracksQuery.data.tracks
+			const uris = getRecommendationsForTracksQuery.data?.tracks
 				.map(({ uri }) => uri)
 				.join(",");
-			const { data } = await addTracksToPlaylist(recPlaylistId, uris);
+
+			// const { data } = await addTracksToPlaylist(recPlaylistId, uris);
+			const data = await addTracksToPlaylistMutation.mutateAsync({
+				playlistId: recPlaylistId,
+				uris,
+			});
 
 			// Then follow playlist
 			if (data) {
@@ -133,24 +140,31 @@ const Recommendations = () => {
 		if (
 			recPlaylistId &&
 			getRecommendationsForTracksQuery.data &&
-			getUserQuery.data?.userId
+			getUserQuery.data?.id
 		) {
 			catchErrors(addTracksAndFollow(recPlaylistId));
 		}
 	}, [
+		// addTracksToPlaylistMutation,
 		getRecommendationsForTracksQuery.data,
-		getUserQuery.data?.userId,
+		getUserQuery.data?.id,
 		recPlaylistId,
 	]);
 
+	const createPlaylistMutation = useCreatePlaylist();
+
 	const createPlaylistOnSave = async () => {
-		if (!getUserQuery.data.userId) {
+		if (!getUserQuery.data.id) {
 			return;
 		}
 
 		const name = `Recommended Tracks Based on ${getPlaylistQuery.data.name}`;
-		const { data } = await createPlaylist(getUserQuery.data?.userId, name);
-		setRecPlaylistId(data.id);
+		// const { data } = await createPlaylist(getUserQuery.data?.id, name);
+		const data = await createPlaylistMutation.mutateAsync({
+			userId: getUserQuery.data?.id,
+			name,
+		});
+		setRecPlaylistId(data?.id);
 	};
 
 	return (

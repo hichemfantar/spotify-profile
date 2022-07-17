@@ -265,8 +265,8 @@ export const createPlaylist = (userId, name) => {
 	return axiosSpotifyClient.post(url, data);
 };
 
-export function useCreatePlaylist(userId, name) {
-	return useMutation(["createPlaylist", userId, name], async () => {
+export function useCreatePlaylist() {
+	return useMutation(["createPlaylist"], async ({ userId, name }) => {
 		return createPlaylist(userId, name).then((res) => res.data);
 	});
 }
@@ -280,8 +280,8 @@ export const addTracksToPlaylist = (playlistId, uris) => {
 	return axiosSpotifyClient.post(url);
 };
 
-export function useAddTracksToPlaylist(playlistId, uris) {
-	return useMutation(["addTracksToPlaylist", playlistId, uris], async () => {
+export function useAddTracksToPlaylist() {
+	return useMutation(["addTracksToPlaylist"], async ({ playlistId, uris }) => {
 		return addTracksToPlaylist(playlistId, uris).then((res) => res.data);
 	});
 }
@@ -295,8 +295,8 @@ export const followPlaylist = (playlistId) => {
 	return axiosSpotifyClient.put(url);
 };
 
-export function useFollowPlaylist(playlistId) {
-	return useMutation(["useFollowPlaylist", playlistId], async () => {
+export function useFollowPlaylist() {
+	return useMutation(["useFollowPlaylist"], async (playlistId) => {
 		return followPlaylist(playlistId).then((res) => res.data);
 	});
 }
