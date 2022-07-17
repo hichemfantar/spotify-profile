@@ -3,10 +3,10 @@ import React, { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
 	doesUserFollowPlaylist,
-	followPlaylist,
 	getTrackIds,
 	useAddTracksToPlaylist,
 	useCreatePlaylist,
+	useFollowPlaylist,
 	useGetPlaylist,
 	useGetRecommendationsForTracks,
 	useGetUser,
@@ -62,17 +62,17 @@ const Recommendations = () => {
 	const seed_genres = "";
 
 	const seed_tracks = useMemo(() => {
+		// if (getPlaylistQuery.data?.tracks?.items) {
+		// let shuffledTracks = [];
+		// shuffledTracks = getPlaylistQuery.data?.tracks?.items?.sort(
+		// 	() => 0.5 - Math.random()
+		// );
+		// if (shuffledTracks) {
 		if (getPlaylistQuery.data?.tracks?.items) {
-			// let shuffledTracks = [];
-			// shuffledTracks = getPlaylistQuery.data?.tracks?.items?.sort(
-			// 	() => 0.5 - Math.random()
-			// );
-			// if (shuffledTracks) {
-			if (getPlaylistQuery.data?.tracks?.items) {
-				return getTrackIds(getPlaylistQuery.data?.tracks?.items?.slice(0, 5));
-				// setSeed_tracks(getTrackIds(shuffledTracks?.slice(0, 5)));
-			}
+			return getTrackIds(getPlaylistQuery.data?.tracks?.items?.slice(0, 5));
+			// setSeed_tracks(getTrackIds(shuffledTracks?.slice(0, 5)));
 		}
+		// }
 	}, [getPlaylistQuery.data?.tracks?.items]);
 
 	const getRecommendationsForTracksQuery = useGetRecommendationsForTracks(
@@ -108,6 +108,7 @@ const Recommendations = () => {
 
 	// If recPlaylistId has been set, add tracks to playlist and follow
 	const addTracksToPlaylistMutation = useAddTracksToPlaylist();
+	const followPlaylistMutation = useFollowPlaylist();
 
 	useMemo(() => {
 		const isUserFollowingPlaylist = async (plistId) => {
@@ -131,7 +132,8 @@ const Recommendations = () => {
 
 			// Then follow playlist
 			if (data) {
-				await followPlaylist(recPlaylistId);
+				// await followPlaylist(recPlaylistId);
+				await followPlaylistMutation.mutateAsync({ playlistId: recPlaylistId });
 				// Check if user is following so we can change the save to spotify button to open on spotify
 				catchErrors(isUserFollowingPlaylist(recPlaylistId));
 			}

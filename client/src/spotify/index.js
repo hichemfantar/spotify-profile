@@ -296,7 +296,7 @@ export const followPlaylist = (playlistId) => {
 };
 
 export function useFollowPlaylist() {
-	return useMutation(["useFollowPlaylist"], async (playlistId) => {
+	return useMutation(["useFollowPlaylist"], async ({ playlistId }) => {
 		return followPlaylist(playlistId).then((res) => res.data);
 	});
 }
