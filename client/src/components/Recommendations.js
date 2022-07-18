@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
 	getTrackIds,
@@ -82,35 +82,16 @@ const Recommendations = () => {
 		getPlaylistQuery.data
 	);
 
-	// useEffect(() => {
-	// 	const fetchPlaylistData = async () => {
-	// 		const { data } = await getPlaylist(playlistId);
-	// 		setPlaylist(data);
-	// 	};
-	// 	catchErrors(fetchPlaylistData());
-
-	// 	// const fetchUserData = async () => {
-	// 	// 	const { data } = await getUser();
-	// 	// 	setUserId(data.id);
-	// 	// };
-	// 	// catchErrors(fetchUserData());
-	// }, [playlistId]);
-
-	// useMemo(() => {
-	// 	const fetchData = async () => {
-	// 		if (getPlaylistQuery.data) {
-	// 			const { data } = await getRecommendationsForTracks(
-	// 				getPlaylistQuery.data.tracks.items
-	// 			);
-	// 			setRecommmendations(data);
-	// 		}
-	// 	};
-	// 	catchErrors(fetchData());
-	// }, [getPlaylistQuery.data]);
+	const [shouldAddTracksAndFollow, setShouldAddTracksAndFollow] =
+		useState(false);
 
 	// If recPlaylistId has been set, add tracks to playlist and follow
 	const addTracksToPlaylistMutation = useAddTracksToPlaylist();
+	const { mutateAsync: addTracksToPlaylistMutationMutateAsync } =
+		addTracksToPlaylistMutation;
 	const followPlaylistMutation = useFollowPlaylist();
+	const { mutateAsync: followPlaylistMutationMutateAsync } =
+		followPlaylistMutation;
 
 	const doesUserFollowPlaylistQuery = useDoesUserFollowPlaylist(
 		recPlaylistId,
@@ -118,45 +99,77 @@ const Recommendations = () => {
 		isFollowPlaylistMutationSucc
 	);
 
+	const uris = getRecommendationsForTracksQuery.data?.tracks
+		.map(({ uri }) => uri)
+		.join(",");
+
+	// const isUserFollowingPlaylist = async (plistId) => {
+	// 	const { data } = await doesUserFollowPlaylist(
+	// 		plistId,
+	// 		getUserQuery.data?.id
+	// 	);
+	// 	setIsFollowing(data[0]);
+	// };
+
+	const addTracksAndFollow = useCallback(async () => {
+		const data = await addTracksToPlaylistMutationMutateAsync({
+			playlistId: recPlaylistId,
+			uris,
+		});
+
+		// Then follow playlist
+		if (data) {
+			await followPlaylistMutationMutateAsync({ playlistId: recPlaylistId });
+			setIsFollowPlaylistMutationSucc(true);
+			setShouldAddTracksAndFollow(false);
+			// Check if user is following so we can change the save to spotify button to open on spotify
+			// catchErrors(isUserFollowingPlaylist(recPlaylistId));
+		}
+	}, [
+		addTracksToPlaylistMutationMutateAsync,
+		followPlaylistMutationMutateAsync,
+		recPlaylistId,
+		uris,
+	]);
+
+	// const addTracksAndFollow = async () => {
+	// 	// if (!getRecommendationsForTracksQuery.data) {
+	// 	// 	return;
+	// 	// }
+
+	// 	// const { data } = await addTracksToPlaylist(recPlaylistId, uris);
+	// 	const data = await addTracksToPlaylistMutationMutateAsync({
+	// 		playlistId: recPlaylistId,
+	// 		uris,
+	// 	});
+
+	// 	// Then follow playlist
+	// 	if (data) {
+	// 		// await followPlaylist(recPlaylistId);
+	// 		await followPlaylistMutationMutateAsync({ playlistId: recPlaylistId });
+	// 		setIsFollowPlaylistMutationSucc(true);
+	// 		setShouldAddTracksAndFollow(false);
+	// 		// Check if user is following so we can change the save to spotify button to open on spotify
+	// 		// catchErrors(isUserFollowingPlaylist(recPlaylistId));
+	// 	}
+	// };
+
+	useEffect(() => {
+		if (shouldAddTracksAndFollow) {
+			catchErrors(addTracksAndFollow(recPlaylistId));
+		}
+	}, [addTracksAndFollow, recPlaylistId, shouldAddTracksAndFollow]);
+
 	useMemo(() => {
-		// const isUserFollowingPlaylist = async (plistId) => {
-		// 	const { data } = await doesUserFollowPlaylist(
-		// 		plistId,
-		// 		getUserQuery.data?.id
-		// 	);
-		// 	setIsFollowing(data[0]);
-		// };
-
-		const addTracksAndFollow = async () => {
-			const uris = getRecommendationsForTracksQuery.data?.tracks
-				.map(({ uri }) => uri)
-				.join(",");
-
-			// const { data } = await addTracksToPlaylist(recPlaylistId, uris);
-			const data = await addTracksToPlaylistMutation.mutateAsync({
-				playlistId: recPlaylistId,
-				uris,
-			});
-
-			// Then follow playlist
-			if (data) {
-				// await followPlaylist(recPlaylistId);
-				await followPlaylistMutation.mutateAsync({ playlistId: recPlaylistId });
-				setIsFollowPlaylistMutationSucc(true);
-				// Check if user is following so we can change the save to spotify button to open on spotify
-				// catchErrors(isUserFollowingPlaylist(recPlaylistId));
-			}
-		};
-
 		if (
 			recPlaylistId &&
 			getRecommendationsForTracksQuery.data &&
 			getUserQuery.data?.id
 		) {
-			catchErrors(addTracksAndFollow(recPlaylistId));
+			setShouldAddTracksAndFollow(true);
+			// catchErrors(addTracksAndFollow(recPlaylistId));
 		}
 	}, [
-		// addTracksToPlaylistMutation,
 		getRecommendationsForTracksQuery.data,
 		getUserQuery.data?.id,
 		recPlaylistId,
