@@ -125,27 +125,10 @@ const ArtistName = styled.a`
 `;
 
 const TopArtists = () => {
-	// const [topArtists, setTopArtists] = useState(null);
 	const [activeRange, setActiveRange] = useState("long");
 	const getTopArtistsQuery = useGetTopArtists(activeRange);
 
-	// const apiCalls = {
-	// 	long: getTopArtistsLong(),
-	// 	medium: getTopArtistsMedium(),
-	// 	short: getTopArtistsShort(),
-	// };
-
-	// useEffect(() => {
-	// 	const fetchData = async () => {
-	// 		const { data } = await getTopArtistsLong();
-	// 		setTopArtists(data);
-	// 	};
-	// 	catchErrors(fetchData());
-	// }, []);
-
 	const changeRange = async (range) => {
-		// const { data } = await apiCalls[range];
-		// setTopArtists(data);
 		setActiveRange(range);
 	};
 

@@ -48,28 +48,11 @@ const TracksContainer = styled.ul`
 `;
 
 const TopTracks = () => {
-	// const [topTracks, setTopTracks] = useState(null);
 	const [activeRange, setActiveRange] = useState("long");
 
 	const getTopTracksQuery = useGetTopTracks(activeRange);
 
-	// const apiCalls = {
-	// 	long: getTopTracksLong(),
-	// 	medium: getTopTracksMedium(),
-	// 	short: getTopTracksShort(),
-	// };
-
-	// useEffect(() => {
-	// 	const fetchData = async () => {
-	// 		const { data } = await getTopTracksLong();
-	// 		setTopTracks(data);
-	// 	};
-	// 	catchErrors(fetchData());
-	// }, []);
-
 	const changeRange = async (range) => {
-		// const { data } = await apiCalls[range];
-		// setTopTracks(data);
 		setActiveRange(range);
 	};
 

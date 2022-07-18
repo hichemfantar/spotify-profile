@@ -97,17 +97,7 @@ const TotalTracks = styled.div`
 `;
 
 const Playlists = () => {
-	// const [playlists, setPlaylists] = useState(null);
-
 	const getPlaylistsQuery = useGetPlaylists();
-
-	// useEffect(() => {
-	// 	const fetchData = async () => {
-	// 		const { data } = await getPlaylists();
-	// 		setPlaylists(data);
-	// 	};
-	// 	catchErrors(fetchData());
-	// }, []);
 
 	return (
 		<Main>

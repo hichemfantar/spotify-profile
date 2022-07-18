@@ -178,25 +178,6 @@ const ArtistName = styled(Link)`
 const User = () => {
 	const userInfoQuery = useUserInfo();
 
-	// const [user, setUser] = useState(null);
-	// const [followedArtists, setFollowedArtists] = useState(null);
-	// const [playlists, setPlaylists] = useState(null);
-	// const [topArtists, setTopArtists] = useState(null);
-	// const [topTracks, setTopTracks] = useState(null);
-
-	// useEffect(() => {
-	// 	const fetchData = async () => {
-	// 		const { user, followedArtists, playlists, topArtists, topTracks } =
-	// 			await getUserInfo();
-	// 		setUser(user);
-	// 		setFollowedArtists(followedArtists);
-	// 		setPlaylists(playlists);
-	// 		setTopArtists(topArtists);
-	// 		setTopTracks(topTracks);
-	// 	};
-	// 	catchErrors(fetchData());
-	// }, []);
-
 	const totalPlaylists = userInfoQuery.data?.playlists
 		? userInfoQuery.data?.playlists.total
 		: 0;

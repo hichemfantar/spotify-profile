@@ -73,11 +73,8 @@ const TotalTracks = styled.p`
 	margin-top: 20px;
 `;
 
-const Playlist = (props) => {
+const Playlist = () => {
 	const { playlistId } = useParams();
-
-	// const [playlist, setPlaylist] = useState(null);
-	// const [audioFeatures, setAudioFeatures] = useState(null);
 
 	const getPlaylistQuery = useGetPlaylist(playlistId);
 
@@ -85,26 +82,6 @@ const Playlist = (props) => {
 		getPlaylistQuery.data?.tracks?.items,
 		getPlaylistQuery.data
 	);
-
-	// useEffect(() => {
-	// 	const fetchData = async () => {
-	// 		const { data } = await getPlaylist(playlistId);
-	// 		setPlaylist(data);
-	// 	};
-	// 	catchErrors(fetchData());
-	// }, [playlistId]);
-
-	// useEffect(() => {
-	// 	const fetchData = async () => {
-	// 		if (getPlaylistQuery.data) {
-	// 			const { data } = await getAudioFeaturesForTracks(
-	// 				getPlaylistQuery.data.tracks.items
-	// 			);
-	// 			setAudioFeatures(data);
-	// 		}
-	// 	};
-	// 	catchErrors(fetchData());
-	// }, [getPlaylistQuery.data]);
 
 	return (
 		<React.Fragment>

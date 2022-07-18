@@ -12,17 +12,7 @@ const TracksContainer = styled.ul`
 `;
 
 const RecentlyPlayed = () => {
-	// const [recentlyPlayed, setRecentlyPlayed] = useState(null);
-
 	const getRecentlyPlayedQuery = useGetRecentlyPlayed();
-
-	// useEffect(() => {
-	// 	const fetchData = async () => {
-	// 		const { data } = await getRecentlyPlayed();
-	// 		setRecentlyPlayed(data);
-	// 	};
-	// 	catchErrors(fetchData());
-	// }, []);
 
 	return (
 		<Main>

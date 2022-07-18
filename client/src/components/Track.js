@@ -113,24 +113,10 @@ const DescriptionLink = styled.a`
 	}
 `;
 
-const Track = (props) => {
+const Track = () => {
 	const { trackId } = useParams();
 
-	// const [track, setTrack] = useState(null);
-	// const [audioAnalysis, setAudioAnalysis] = useState(null);
-	// const [audioFeatures, setAudioFeatures] = useState(null);
-
 	const trackInfoQuery = useTrackInfo(trackId);
-
-	// useEffect(() => {
-	// 	const fetchData = async () => {
-	// 		const data = await getTrackInfo(trackId);
-	// 		setTrack(data.track);
-	// 		setAudioAnalysis(data.audioAnalysis);
-	// 		setAudioFeatures(data.audioFeatures);
-	// 	};
-	// 	catchErrors(fetchData());
-	// }, [trackId]);
 
 	return (
 		<React.Fragment>
