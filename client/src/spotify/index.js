@@ -267,10 +267,16 @@ export const doesUserFollowPlaylist = (playlistId, userId) =>
 		`playlists/${playlistId}/followers/contains?ids=${userId}`
 	);
 
-export function useDoesUserFollowPlaylist(playlistId, userId) {
-	return useQuery(["doesUserFollowPlaylist", playlistId, userId], async () => {
-		return doesUserFollowPlaylist(playlistId, userId).then((res) => res.data);
-	});
+export function useDoesUserFollowPlaylist(playlistId, userId, enabled) {
+	return useQuery(
+		["doesUserFollowPlaylist", playlistId, userId, enabled],
+		async () => {
+			return doesUserFollowPlaylist(playlistId, userId).then((res) => res.data);
+		},
+		{
+			enabled: !!enabled,
+		}
+	);
 }
 
 /**

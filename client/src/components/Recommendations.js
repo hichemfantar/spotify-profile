@@ -2,10 +2,10 @@ import PropTypes from "prop-types";
 import React, { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
-	doesUserFollowPlaylist,
 	getTrackIds,
 	useAddTracksToPlaylist,
 	useCreatePlaylist,
+	useDoesUserFollowPlaylist,
 	useFollowPlaylist,
 	useGetPlaylist,
 	useGetRecommendationsForTracks,
@@ -52,7 +52,9 @@ const Recommendations = () => {
 	// const [recommendations, setRecommmendations] = useState(null);
 	const [recPlaylistId, setRecPlaylistId] = useState(null);
 	// const [userId, setUserId] = useState(null);
-	const [isFollowing, setIsFollowing] = useState(false);
+	// const [isFollowing, setIsFollowing] = useState(false);
+	const [isFollowPlaylistMutationSucc, setIsFollowPlaylistMutationSucc] =
+		useState(false);
 
 	const getPlaylistQuery = useGetPlaylist(playlistId);
 
@@ -110,14 +112,20 @@ const Recommendations = () => {
 	const addTracksToPlaylistMutation = useAddTracksToPlaylist();
 	const followPlaylistMutation = useFollowPlaylist();
 
+	const doesUserFollowPlaylistQuery = useDoesUserFollowPlaylist(
+		recPlaylistId,
+		getUserQuery.data?.id,
+		isFollowPlaylistMutationSucc
+	);
+
 	useMemo(() => {
-		const isUserFollowingPlaylist = async (plistId) => {
-			const { data } = await doesUserFollowPlaylist(
-				plistId,
-				getUserQuery.data?.id
-			);
-			setIsFollowing(data[0]);
-		};
+		// const isUserFollowingPlaylist = async (plistId) => {
+		// 	const { data } = await doesUserFollowPlaylist(
+		// 		plistId,
+		// 		getUserQuery.data?.id
+		// 	);
+		// 	setIsFollowing(data[0]);
+		// };
 
 		const addTracksAndFollow = async () => {
 			const uris = getRecommendationsForTracksQuery.data?.tracks
@@ -134,8 +142,9 @@ const Recommendations = () => {
 			if (data) {
 				// await followPlaylist(recPlaylistId);
 				await followPlaylistMutation.mutateAsync({ playlistId: recPlaylistId });
+				setIsFollowPlaylistMutationSucc(true);
 				// Check if user is following so we can change the save to spotify button to open on spotify
-				catchErrors(isUserFollowingPlaylist(recPlaylistId));
+				// catchErrors(isUserFollowingPlaylist(recPlaylistId));
 			}
 		};
 
@@ -179,7 +188,10 @@ const Recommendations = () => {
 							{getPlaylistQuery.data.name}
 						</PlaylistLink>
 					</h2>
-					{isFollowing && recPlaylistId ? (
+					{/* {isFollowing && */}
+					{doesUserFollowPlaylistQuery.data &&
+					doesUserFollowPlaylistQuery.data[0] &&
+					recPlaylistId ? (
 						<OpenButton
 							href={`https://open.spotify.com/playlist/${recPlaylistId}`}
 							target="_blank"
