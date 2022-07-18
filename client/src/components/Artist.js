@@ -65,48 +65,43 @@ const NumLabel = styled.p`
 	margin-top: ${spacing.xs};
 `;
 
-const Artist = (props) => {
+const Artist = () => {
 	const { artistId } = useParams();
-	// const [artist, setArtist] = useState(null);
 	const getArtistQuery = useGetArtist(artistId);
-
-	// useEffect(() => {
-	// 	const fetchData = async () => {
-	// 		const { data } = await getArtist(artistId);
-	// 		setArtist(data);
-	// 	};
-	// 	catchErrors(fetchData());
-	// }, [artistId]);
+	const { data: getArtistQueryData } = getArtistQuery;
 
 	return (
 		<React.Fragment>
-			{getArtistQuery.data ? (
+			{getArtistQueryData ? (
 				<ArtistContainer>
 					<Artwork>
-						<img src={getArtistQuery.data.images[0].url} alt="Artist Artwork" />
+						<img
+							src={getArtistQueryData?.images[0]?.url}
+							alt="Artist Artwork"
+						/>
 					</Artwork>
 					<div>
-						<ArtistName>{getArtistQuery.data.name}</ArtistName>
+						<ArtistName>{getArtistQueryData?.name}</ArtistName>
 						<Stats>
 							<Stat>
 								<Number>
-									{formatWithCommas(getArtistQuery.data.followers.total)}
+									{formatWithCommas(getArtistQueryData?.followers?.total)}
 								</Number>
 								<NumLabel>Followers</NumLabel>
 							</Stat>
-							{getArtistQuery.data.genres && (
+							{getArtistQueryData?.genres && (
 								<Stat>
 									<Number>
-										{getArtistQuery.data.genres.map((genre) => (
+										{getArtistQueryData?.genres?.map((genre) => (
 											<Genre key={genre}>{genre}</Genre>
 										))}
 									</Number>
 									<NumLabel>Genres</NumLabel>
 								</Stat>
 							)}
-							{getArtistQuery.data.popularity && (
+							{getArtistQueryData?.popularity && (
 								<Stat>
-									<Number>{getArtistQuery.data.popularity}%</Number>
+									<Number>{getArtistQueryData?.popularity}%</Number>
 									<NumLabel>Popularity</NumLabel>
 								</Stat>
 							)}
