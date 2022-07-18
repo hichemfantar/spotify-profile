@@ -176,6 +176,8 @@ const Recommendations = () => {
 	]);
 
 	const createPlaylistMutation = useCreatePlaylist();
+	const { mutateAsync: createPlaylistMutationMutateAsync } =
+		createPlaylistMutation;
 
 	const createPlaylistOnSave = async () => {
 		if (!getUserQuery.data.id) {
@@ -184,7 +186,7 @@ const Recommendations = () => {
 
 		const name = `Recommended Tracks Based on ${getPlaylistQuery.data.name}`;
 		// const { data } = await createPlaylist(getUserQuery.data?.id, name);
-		const data = await createPlaylistMutation.mutateAsync({
+		const data = await createPlaylistMutationMutateAsync({
 			userId: getUserQuery.data?.id,
 			name,
 		});
