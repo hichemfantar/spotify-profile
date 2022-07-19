@@ -131,6 +131,7 @@ const Mask = styled.div`
 	color: ${colors.white};
 	opacity: 0;
 	transition: ${theme.transition};
+	border-radius: 100%;
 	svg {
 		width: 25px;
 	}
