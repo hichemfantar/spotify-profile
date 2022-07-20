@@ -2,7 +2,9 @@
 // https://developer.spotify.com/documentation/general/guides/authorization-guide/
 // https://github.com/spotify/web-api-auth-examples
 
-require("dotenv").config();
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -15,14 +17,20 @@ if (process.env.NODE_ENV !== "production") {
 	FRONTEND_URI = "http://localhost:3000";
 }
 
-const express = require("express");
-const request = require("request");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
-const path = require("path");
-const cluster = require("cluster");
-const numCPUs = require("os").cpus().length;
-const history = require("connect-history-api-fallback");
+import cluster from "cluster";
+import history from "connect-history-api-fallback";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import express from "express";
+import os from "os";
+import path from "path";
+import request from "request";
+import { fileURLToPath } from "url";
+
+const numCPUs = os.cpus().length;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Generates a random string containing numbers and letters
