@@ -181,39 +181,12 @@ export function useGetTopArtistsLong() {
  * Get a User's Top Tracks
  * https://developer.spotify.com/documentation/web-api/reference/personalization/get-users-top-artists-and-tracks/
  */
-export const getTopTracks = (range) =>
+export const getTopTracks = (range = "short") =>
 	axiosSpotifyClient.get(`me/top/tracks?limit=50&time_range=${range}_term`);
 
-export function useGetTopTracks(range) {
+export function useGetTopTracks(range = "short") {
 	return useQuery(["TopTracks", range], async () => {
 		return getTopTracks(range).then((res) => res.data);
-	});
-}
-
-// export const getTopTracksShort = () =>
-// 	axiosSpotifyClient.get("me/top/tracks?limit=50&time_range=short_term");
-
-// export function useGetTopTracksShort() {
-// 	return useQuery(["TopTracksShort"], async () => {
-// 		return getTopTracksShort().then((res) => res.data);
-// 	});
-// }
-
-// export const getTopTracksMedium = () =>
-// 	axiosSpotifyClient.get("me/top/tracks?limit=50&time_range=medium_term");
-
-// export function useGetTopTracksMedium() {
-// 	return useQuery(["TopTracksMedium"], async () => {
-// 		return getTopTracksMedium().then((res) => res.data);
-// 	});
-// }
-
-export const getTopTracksLong = () =>
-	axiosSpotifyClient.get("me/top/tracks?limit=50&time_range=long_term");
-
-export function useGetTopTracksLong() {
-	return useQuery(["TopTracksLong"], async () => {
-		return getTopTracksLong().then((res) => res.data);
 	});
 }
 
@@ -446,20 +419,24 @@ export function useGetTrackAudioFeatures(trackId) {
 	});
 }
 
-export const getUserInfo = () =>
-	Promise.all([
-		getUser(),
-		getFollowing(),
-		getPlaylists(),
-		getTopArtistsLong(),
-		getTopTracksLong(),
-	]).then(([user, followedArtists, playlists, topArtists, topTracks]) => ({
+export const getUserInfo = async () => {
+	const [user, followedArtists, playlists, topArtists, topTracks] =
+		await Promise.all([
+			getUser(),
+			getFollowing(),
+			getPlaylists(),
+			getTopArtistsLong(),
+			getTopTracks("long"),
+		]);
+
+	return {
 		user: user.data,
 		followedArtists: followedArtists.data,
 		playlists: playlists.data,
 		topArtists: topArtists.data,
 		topTracks: topTracks.data,
-	}));
+	};
+};
 
 export function useUserInfo() {
 	return useQuery(["user-info"], async () => {
@@ -467,16 +444,19 @@ export function useUserInfo() {
 	});
 }
 
-export const getTrackInfo = (trackId) =>
-	Promise.all([
+export const getTrackInfo = async (trackId) => {
+	const [track, audioAnalysis, audioFeatures] = await Promise.all([
 		getTrack(trackId),
 		getTrackAudioAnalysis(trackId),
 		getTrackAudioFeatures(trackId),
-	]).then(([track, audioAnalysis, audioFeatures]) => ({
+	]);
+
+	return {
 		track: track.data,
 		audioAnalysis: audioAnalysis.data,
 		audioFeatures: audioFeatures.data,
-	}));
+	};
+};
 
 export function useTrackInfo(trackId) {
 	return useQuery(["track-info", trackId], async () => {
