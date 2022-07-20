@@ -1,3 +1,4 @@
+import { ImSpinner2 } from "react-icons/im";
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
 
@@ -13,6 +14,7 @@ import {
 
 import styled from "styled-components/macro";
 import { theme, mixins, media } from "../styles";
+import Loader from "./loader/Loader";
 const { colors } = theme;
 
 const Container = styled.nav`
@@ -140,6 +142,7 @@ const Nav = () => (
 			<Link to="/">
 				<IconSpotify />
 			</Link>
+			{/* <Loader size="30px" style={{ marginTop: 35 }} /> */}
 		</Logo>
 		<Menu>
 			<MenuItem>
