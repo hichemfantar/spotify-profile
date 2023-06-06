@@ -4,6 +4,10 @@
 
 This project was forked from [Spotify Profile by Brittany Chiang](https://github.com/bchiang7/spotify-profile).
 
+Moved from Reach Router to React Router
+Updated dependencies to latest versions
+Moved server state management to React Query
+
 Built with a bunch of things, but to name a few:
 
 - [Spotify Web API](https://developer.spotify.com/documentation/web-api/)
