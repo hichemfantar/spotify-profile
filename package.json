@@ -10,7 +10,7 @@
 	},
 	"keywords": [],
 	"author": "Hichem Fantar <hichemfantar2049@gmail.com>",
-	"license": "ISC",
+	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/hichemfantar/spotify-observer/issues"
 	},
